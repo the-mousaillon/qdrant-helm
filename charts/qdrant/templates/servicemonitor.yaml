@@ -18,7 +18,6 @@ spec:
       interval: {{ .Values.metrics.serviceMonitor.scrapeInterval }}
       path: {{ .Values.metrics.serviceMonitor.targetPath }}
       port: {{ .Values.metrics.serviceMonitor.targetPort }}
-      scheme: {{ ternary "https" "http" .Values.config.service.enable_tls -}}
       scrapeTimeout: {{ .Values.metrics.serviceMonitor.scrapeTimeout }}
       {{- /* auto scheme: https if TLS is enabled on Qdrant, else http; can be overridden via values */ -}}
       {{- $sm := .Values.metrics.serviceMonitor -}}
