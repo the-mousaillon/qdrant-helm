@@ -19,23 +19,26 @@ spec:
       path: {{ .Values.metrics.serviceMonitor.targetPath }}
       port: {{ .Values.metrics.serviceMonitor.targetPort }}
       scrapeTimeout: {{ .Values.metrics.serviceMonitor.scrapeTimeout }}
-      {{- /* auto scheme: https if TLS is enabled on Qdrant, else http; can be overridden via values */ -}}
+
+      {{/* auto scheme: https if TLS is enabled on Qdrant, else http; can be overridden via values */}}
       {{- $sm := .Values.metrics.serviceMonitor -}}
       {{- $autoScheme := ternary "https" "http" .Values.config.service.enable_tls -}}
-      {{- $scheme := default $autoScheme $sm.scheme -}}
+      {{- $scheme := default $autoScheme $sm.scheme }}
       scheme: {{ $scheme }}
+
       {{- /* render tlsConfig only when scraping over https or explicitly enabled */ -}}
       {{- $tls := $sm.tlsConfig -}}
       {{- if or (eq $scheme "https") ($tls.enabled | default false) }}
       tlsConfig:
         insecureSkipVerify: {{ default false $tls.insecureSkipVerify }}
-        {{- if and $tls.serverName (ne $tls.serverName "") }}
-        serverName: {{ $tls.serverName }}
+        {{- with $tls.serverName }}
+        serverName: {{ . }}
         {{- end }}
-        {{- if and $tls.caFile (ne $tls.caFile "") }}
-        caFile: {{ $tls.caFile }}
+        {{- with $tls.caFile }}
+        caFile: {{ . }}
         {{- end }}
       {{- end }}
+
 {{- if .Values.metrics.serviceMonitor.metricRelabelings }}
       metricRelabelings:
 {{ tpl (toYaml .Values.metrics.serviceMonitor.metricRelabelings | indent 8) . }}
