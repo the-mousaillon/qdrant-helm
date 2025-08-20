@@ -215,6 +215,11 @@ metrics:
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
     ##
     relabelings: []
+    tlsConfig:
+      enabled: false
+      insecureSkipVerify: false
+      serverName: ""
+      caFile: ""
 
 serviceAccount:
   annotations: {}
